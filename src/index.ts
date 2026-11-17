@@ -8,6 +8,33 @@ function createServer() {
 		version: "1.0.0",
 	});
 
+  // 091伺服器報名查詢：模擬測試版本
+  server.registerTool(
+    "lookup_registration",
+    {
+      description:
+        "查詢世紀帝國M 091伺服器R2萬星霸業第二輪的報名狀態。目前僅為測試工具。",
+      inputSchema: z.object({
+        uid: z.string().describe("玩家遊戲UID"),
+      }),
+    },
+    async ({ uid }) => {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              activity: "091 R2萬星霸業 第二輪",
+              uid,
+              status: "test_only",
+              message: "MCP工具測試成功，尚未連接真實報名資料"
+            }),
+          },
+        ],
+      };
+    }
+  );
+
 	server.registerTool(
 		"add",
 		{ inputSchema: z.object({ a: z.number(), b: z.number() }) },
