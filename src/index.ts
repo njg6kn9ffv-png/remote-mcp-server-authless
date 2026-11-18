@@ -1,3 +1,11 @@
+
+import {
+  OAuthResourceServer,
+  insufficientScope,
+  type AuthorizationServerBinding
+} from "@cloudflare/workers-oauth-provider";
+
+
 import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler } from "agents/mcp/server";
 import { z } from "zod";
@@ -84,10 +92,42 @@ function createServer() {
 	return server;
 }
 
+
+type AuthProps = {
+  googleSub: string;
+};
+
+type McpEnv = Env & {
+  AUTH_SERVER: AuthorizationServerBinding<AuthProps>;
+};
+
 const handler = createMcpHandler(createServer);
 
-export default {
-	fetch(request: Request, env: Env, ctx: ExecutionContext) {
-		return handler(request, env, ctx);
-	},
-} satisfies ExportedHandler<Env>;
+export default new OAuthResourceServer<McpEnv, AuthProps>({
+  resourceMetadata: {
+    resource:
+      "https://remote-mcp-server-authless.2znjrtzc9g.workers.dev/mcp",
+    authorization_servers: [
+      "https://091-registration-auth.2znjrtzc9g.workers.dev"
+    ]
+  },
+
+  requiredScopes: ["mcp:read"],
+
+  validateToken: (env) =>
+    env.AUTH_SERVER.validateToken,
+
+  handler: {
+    fetch(request, env, ctx) {
+      if (!ctx.auth.scope.includes("mcp:read")) {
+        return insufficientScope(
+          ctx.auth,
+          ["mcp:read"]
+        );
+      }
+
+      return handler(request, env, ctx);
+    }
+  }
+});
+
