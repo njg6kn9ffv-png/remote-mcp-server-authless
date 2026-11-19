@@ -104,13 +104,15 @@ type McpEnv = Env & {
 const handler = createMcpHandler(createServer);
 
 export default new OAuthResourceServer<McpEnv, AuthProps>({
-  resourceMetadata: {
-    resource:
-      "https://remote-mcp-server-authless.2znjrtzc9g.workers.dev/mcp",
-    authorization_servers: [
-      "https://091-registration-auth.2znjrtzc9g.workers.dev"
-    ]
-  },
+
+resourceMetadata: {
+  resource:
+    "https://oauth-protection-test-remote-mcp-server-authless.2znjrtzc9g.workers.dev/mcp",
+  authorization_servers: [
+    "https://091-registration-auth.2znjrtzc9g.workers.dev"
+  ]
+},
+
 
   requiredScopes: ["mcp:read"],
 
