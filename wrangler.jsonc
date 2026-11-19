@@ -1,3 +1,4 @@
+
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "remote-mcp-server-authless",
@@ -12,5 +13,14 @@
       "binding": "AUTH_SERVER",
       "service": "091-registration-auth"
     }
-  ]
+  ],
+  "previews": {
+    "services": [
+      {
+        "binding": "AUTH_SERVER",
+        "service": "091-registration-auth"
+      }
+    ]
+  }
 }
+
